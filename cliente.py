@@ -51,9 +51,9 @@ def medir_largura_de_banda(url_segmento_teste):
     - Retornar a largura de banda medida
     """
     try:
-        inicio = time.time()
+        inicio = time.perf_counter()
         resposta = requests.get(url_segmento_teste)
-        fim = time.time()
+        fim = time.perf_counter()
         tempo = fim - inicio
         tamanho_bytes = len(resposta.content)
         largura_banda_mbps = (tamanho_bytes * 8) / (tempo * 1_000_000)
