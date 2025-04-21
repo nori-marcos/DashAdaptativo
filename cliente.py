@@ -21,8 +21,8 @@ Implementar um cliente DASH que:
 """
 
 # Exemplo de biblioteca útil:
-# import requests
-# import time
+import requests
+import time
 
 # URL do manifesto (use 127.0.0.1 em vez de localhost para evitar erros de permissão)
 MANIFEST_URL = "http://127.0.0.1:5000/manifest.mpd"
