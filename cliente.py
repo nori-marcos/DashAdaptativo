@@ -71,13 +71,13 @@ def selecionar_qualidade(manifesto, largura_banda_mbps):
     - Retornar a melhor representação suportada
     """
     melhor = None
-    for rep in representacoes:
+    for rep in manifesto:
         if rep["bandwidth"] <= largura_banda_mbps:
             melhor = rep
     if melhor:
         print(f"Qualidade selecionada: {melhor['id']} ({melhor['bandwidth']} Mbps)")
     else:
-        melhor = representacoes[0]
+        melhor = manifesto[0]
         print(f"Nenhuma qualidade compatível. Selecionado padrão: {melhor['id']}")
     return melhor
 
