@@ -60,12 +60,12 @@ def manifest():
 def video_segment(quality):
     # Simulate file size by delaying response
     file_map = {
-        "360p": ("segments/360p_segment.mp4", 0.5),
-        "480p": ("segments/480p_segment.mp4", 0.8),
-        "720p": ("segments/720p_segment.mp4", 1.2),
-        "1080p": ("segments/1080p_segment.mp4", 1.8),
+        "360p": ("segments/360p/segment.mp4", 0.5),
+        "480p": ("segments/480p/segment.mp4", 0.8),
+        "720p": ("segments/720p/segment.mp4", 1.2),
+        "1080p": ("segments/1080p/segment.mp4", 1.8),
     }
-    file, delay = file_map.get(quality, ("segments/360p_segment.mp4", 0.5))
+    file, delay = file_map.get(quality, ("segments/360p/segment.mp4", 0.5))
     time.sleep(delay)  # Simulate download time based on quality
     return send_file(file, as_attachment=False)
 
