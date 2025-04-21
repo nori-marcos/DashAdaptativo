@@ -33,7 +33,14 @@ def baixar_manifesto():
     - Obter o JSON com as representações de vídeo
     - Retornar o dicionário com as informações do manifesto
     """
-    pass  # implementar
+    try:
+        resposta = requests.get(MANIFEST_URL)
+        resposta.raise_for_status()
+        manifesto = resposta.json()
+        return manifesto["video"]["representations"]
+    except Exception  as e:
+        print(f"Erro ao baixar o manifesto: {e}")
+        return None
 
 def medir_largura_de_banda(url_segmento_teste):
     """
@@ -43,7 +50,18 @@ def medir_largura_de_banda(url_segmento_teste):
     - Calcular a largura de banda em Mbps: (tamanho_bytes * 8) / (tempo * 1_000_000)
     - Retornar a largura de banda medida
     """
-    pass  # implementar
+    try:
+        inicio = time.time()
+        resposta = requests.get(url_segmento_teste)
+        fim = time.time()
+        tempo = fim - inicio
+        tamanho_bytes = len(resposta.content)
+        largura_banda_mbps = (tamanho_bytes * 8) / (tempo * 1_000_000)
+        print(f"Largura de banda estimada: {largura_banda_mbps:.2f} Mbps")
+        return largura_banda_mbps
+    except Exception as e:
+        print(f"Erro ao medir largura de banda: {e}")
+        return 0
 
 def selecionar_qualidade(manifesto, largura_banda_mbps):
     """
@@ -52,7 +70,16 @@ def selecionar_qualidade(manifesto, largura_banda_mbps):
     - Comparar a largura de banda exigida por cada uma com a medida
     - Retornar a melhor representação suportada
     """
-    pass  # implementar
+    melhor = None
+    for rep in representacoes:
+        if rep["bandwidth"] <= largura_banda_mbps:
+            melhor = rep
+    if melhor:
+        print(f"Qualidade selecionada: {melhor['id']} ({melhor['bandwidth']} Mbps)")
+    else:
+        melhor = representacoes[0]
+        print(f"Nenhuma qualidade compatível. Selecionado padrão: {melhor['id']}")
+    return melhor
 
 def baixar_video(representacao):
     """
@@ -60,7 +87,14 @@ def baixar_video(representacao):
     - Fazer uma requisição GET para a URL da representação escolhida
     - Salvar o conteúdo em um arquivo local (ex: video_720p.mp4)
     """
-    pass  # implementar
+    try:
+        resposta = requests.get(representacao["url"])
+        nome_arquivo = f"video_{representacao['id']}.mp4"
+        with open(nome_arquivo, "wb") as f:
+            f.write(resposta.content)
+        print(f"Vídeo salvo como: {nome_arquivo}")
+    except Exception as e:
+        print(f"Erro ao baixar vídeo: {e}")
 
 def main():
     """
@@ -69,7 +103,24 @@ def main():
     - Exibir os dados na tela
     - Salvar o vídeo com a qualidade selecionada
     """
-    pass  # implementar
+    print("Baixando manifesto...")
+    representacoes = baixar_manifesto()
+    if not representacoes:
+        return
+
+    print("\nMedição de largura de banda...")
+    url_360p = next((rep["url"] for rep in representacoes if rep["id"] == "360p"), None)
+    if not url_360p:
+        print("Erro: representação 360p não encontrada.")
+        return
+
+    largura_banda = medir_largura_de_banda(url_360p)
+
+    print("\nSelecionando melhor qualidade...")
+    melhor_rep = selecionar_qualidade(representacoes, largura_banda)
+
+    print("\nBaixando segmento final...")
+    baixar_video(melhor_rep)
 
 if __name__ == '__main__':
     main()
